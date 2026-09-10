@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quote generator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="quote-generator">
+        <h2>Quote of the day</h2>
+        <blockquote>loading..</blockquote>
+        <span>loading..</span>
+        <div class="buttons">
+            <button id="newQuote">newQuote</button>
+            <button id="twitter"> Tweet</button>
+        </div>
+    </div>
+
+    <script>const quoteElement = document.querySelector("blockquote");
+        const authorElement = document.querySelector("span");
+        const newQuoteBtn = document.getElementById("newQuote");
+        const tweetBtn = document.getElementById("twitter");
+
+
+        const API_URL = "https://dummyjson.com/quotes/random";
+
+
+        async function getQuote() {
+            try {
+
+                newQuoteBtn.disabled = true;
+                newQuoteBtn.textContent = "Loading...";
+
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error("Failed to fetch quote");
+
+                const data = await response.json();
+
+
+                quoteElement.textContent = data.quote;
+                authorElement.textContent = data.author;
+            } catch (error) {
+                quoteElement.textContent = "Oops! Could not fetch a quote.";
+                authorElement.textContent = "Error";
+            } finally {
+                newQuoteBtn.disabled = false;
+                newQuoteBtn.textContent = "New Quote";
+            }
+        }
+
+
+        function shareTweet() {
+            const quoteText = quoteElement.textContent;
+            const authorText = authorElement.textContent;
+
+
+            const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(`"${quoteText}" - ${authorText}`)}`;
+
+
+            window.open(tweetUrl, "_blank");
+        }
+
+
+        newQuoteBtn.addEventListener("click", getQuote);
+        tweetBtn.addEventListener("click", shareTweet);
+
+
+        getQuote();
+    </script>
+</body>
+
+</html>
